@@ -272,7 +272,7 @@ export default function Home() {
           target="_blank"
           rel="noreferrer"
         >
-          K-Monitor nyílt adatbázis
+          K-Monitor Adatbázis (Huggingface dataset)
         </a>
       </footer>
     </main>
