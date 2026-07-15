@@ -119,6 +119,12 @@ footer {
   margin-top: 6px;
 }
 
+.chart-help {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text);
+}
+
 footer a {
   color: inherit;
 }

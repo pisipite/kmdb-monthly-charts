@@ -39,6 +39,15 @@ const TYPE_ALIASES: Record<string, EntityColumn> = {
   others: "others",
 };
 
+const SEARCH_FIELDS: Record<EntityColumn, string> = {
+  newspaper: "news_newspapers",
+  institutions: "news_institutions",
+  files: "news_files",
+  persons: "news_persons",
+  places: "news_places",
+  others: "news_others",
+};
+
 function normalizeType(value: string | null): EntityColumn {
   const key = (value || "newspaper")
     .normalize("NFD")
@@ -91,6 +100,43 @@ function formatMonth(value: string): string {
   }).format(new Date(`${value}-01T12:00:00Z`));
 }
 
+function openFilteredSearch(config: EntityConfig, monthValue: string): void {
+  const [year, month] = monthValue.split("-").map(Number);
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  const form = document.createElement("form");
+  form.method = "post";
+  form.action = "https://adatbazis.k-monitor.hu/kereses";
+  form.target = "_blank";
+  form.style.display = "none";
+
+  const fields: Record<string, string> = {
+    search_switch: "2",
+    [SEARCH_FIELDS[config.column]]: config.name,
+    from_date: `${monthValue}-01`,
+    to_date: `${monthValue}-${String(lastDay).padStart(2, "0")}`,
+    "cid_2[5]": "on",
+    "cid_2[6]": "on",
+    "cid_2[7]": "on",
+    news_type_news_2: "on",
+    news_type_database_2: "on",
+    news_type_reported_2: "on",
+    search_tags_type: "2",
+    go: "Keresés",
+  };
+
+  for (const [name, value] of Object.entries(fields)) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+  form.remove();
+}
+
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const chartRef = useRef<{ destroy: () => void } | null>(null);
@@ -139,8 +185,17 @@ export default function Home() {
               callbacks: {
                 title: (items) => formatMonth(String(items[0].label)),
                 label: (item) => `${item.formattedValue} cikk`,
+                afterBody: () => ["Kattints a találatok megnyitásához"],
               },
             },
+          },
+          onHover: (_event, elements, chart) => {
+            chart.canvas.style.cursor = elements.length > 0 ? "pointer" : "default";
+          },
+          onClick: (_event, elements) => {
+            const index = elements[0]?.index;
+            const monthValue = index === undefined ? undefined : values[index]?.month;
+            if (monthValue) openFilteredSearch(config, monthValue);
           },
           scales: {
             x: {
@@ -305,6 +360,7 @@ export default function Home() {
       </div>
 
       <footer>
+        <span className="chart-help">Kattints egy oszlopra a havi találatokért.</span>
         Forrás:{" "}
         <a
           href="https://huggingface.co/datasets/K-Monitor/kmdb_base"
