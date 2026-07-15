@@ -1,3 +1,26 @@
+# használat
+```bash
+<iframe
+  src="https://kmonitor-monthly-charts.info544012.chatgpt.site/?type=lap&amp;name=444&amp;title=A%20444.hu%20cikkeinek%20sz%C3%A1ma%20a%20K-Monitor%20Adatb%C3%A1zisban"
+  title="A 444.hu cikkeinek száma a K-Monitor Adatbázisban"
+  width="100%"
+  height="420"
+  frameborder="0"
+  scrolling="no"
+  loading="lazy"
+  sandbox="allow-same-origin allow-scripts allow-downloads">
+</iframe>
+```
+Az ábra minden oldalbetöltéskor közvetlenül a Hugging Face aktuális adatállományából számolja ki a havi cikkszámokat.
+
+Más entitásoknál csak a type, name és igény szerint a title értékét kell megváltoztatni:
+- lap: type=lap&name=444
+- intézmény: type=intezmeny&name=MÁV
+- akta: type=akta&name=Kopaszi-gát
+- személy: type=szemely&name=...
+
+A name mezőben az adatbázisban szereplő pontos entitásnevet érdemes használni.
+
 # vinext-starter
 
 A clean full-stack starter running on
